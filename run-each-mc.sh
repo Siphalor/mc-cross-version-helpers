@@ -1,4 +1,4 @@
-#/bin/env sh
+#! /bin/env sh
 
 if [ $# == 0 ] ; then
   echo "Error: must supply the command to run for every MC version"
