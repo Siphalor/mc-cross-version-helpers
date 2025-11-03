@@ -1,6 +1,6 @@
 #! /bin/env sh
 
-if [ $# == 0 ] ; then
+if [ $# -eq 0 ] ; then
   echo "Error: must supply the command to run for every MC version"
   exit 1
 fi
