@@ -5,7 +5,7 @@ if [ $# -eq 0 ] ; then
   exit 1
 fi
 
-mcVersions=$(find ./gradle -maxdepth 1 -type d -name 'mc-*' | sed -n -e 's#.*mc-\([0-9.]\+\).*#\1#g' -e p)
+mcVersions=$(find ./gradle -maxdepth 1 -type d -name 'mc-*' | sed -n -e 's#.*mc-\([0-9.]\+\).*#\1#g' -e p | sort -V)
 echo "Discovered MC versions:
 $mcVersions"
 
