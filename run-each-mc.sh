@@ -18,12 +18,15 @@ for mcVersion in $mcVersions ; do
   printf '%bRunning "%s" for MC version %s%b\n\n' "$FMT_BLUE" "$*" "$mcVersion" "$FMT_CLEAR"
   sed gradle.properties -i -e "s#\(minecraft\.version\.descriptor = \).*#\1$mcVersion#"
   if "$@" ; then
-    succeeded="$mcVersion $succeeded"
+    succeeded="$succeeded $mcVersion"
   else
-    failed="$mcVersion $failed"
+    failed="$failed $mcVersion"
   fi
   echo
 done
+
+succeeded="${succeeded# }"
+failed="${failed# }"
 
 printf '%bResults:%b\n' "$FMT_BLUE" "$FMT_CLEAR"
 if [ -n "$succeeded" ] ; then
