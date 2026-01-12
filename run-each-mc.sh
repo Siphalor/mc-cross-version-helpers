@@ -42,6 +42,8 @@ for arg in "$@" ; do
       ;;
     "--"*)
       echo "Unrecognized argument: $arg" > /dev/stderr
+      echo > /dev/stderr
+      printHelp
       exit 100
       ;;
   esac
