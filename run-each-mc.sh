@@ -5,19 +5,62 @@ FMT_GREEN="\033[32m"
 FMT_BLUE="\033[34m"
 FMT_CLEAR="\033[0m"
 
+printHelp() {
+  cat <<EOT > /dev/stderr
+Usage: $0 [options] [--] <command> [<args>]
+Options:
+  --versions: Comma-separated list of Minecraft versions this command should run for.
+      By default, the command will be executed for each available Minecraft version.
+EOT
+}
+
 if [ $# -eq 0 ] ; then
-  echo "Error: must supply the command to run for every MC version"
-  exit 1
+  printHelp
+  exit 100
 fi
 
-mcVersions=$(find ./gradle -maxdepth 1 -type d -name 'mc-*' | sed -n -e 's#.*mc-\([0-9.]\+\).*#\1#g' -e p | sort -V)
+for arg in "$@" ; do
+  if [ "$mode" = cmd ] ; then
+    command="$command $arg"
+    continue
+  fi
+  case "$lastArg" in
+    "--versions")
+      mcVersions="$mcVersions $(echo "$arg" | sed 's/,/ /g')"
+      lastArg=
+      continue
+      ;;
+  esac
+  case "$arg" in
+    "--versions")
+      lastArg="$arg"
+      continue
+      ;;
+    "--")
+      mode=cmd
+      continue
+      ;;
+    "--"*)
+      echo "Unrecognized argument: $arg" > /dev/stderr
+      exit 100
+      ;;
+  esac
+
+  mode=cmd
+  command="$arg"
+done
+
+if [ -z "$mcVersions" ] ; then
+  mcVersions=$(find ./gradle -maxdepth 1 -type d -name 'mc-*' | sed -n -e 's#.*mc-\([0-9.]\+\).*#\1#g' -e p | sort -V)
+fi
+
 echo "Discovered MC versions:
 $mcVersions"
 
 for mcVersion in $mcVersions ; do
-  printf '%bRunning "%s" for MC version %s%b\n\n' "$FMT_BLUE" "$*" "$mcVersion" "$FMT_CLEAR"
+  printf '%bRunning "%s" for MC version %s%b\n\n' "$FMT_BLUE" "$command" "$mcVersion" "$FMT_CLEAR"
   sed gradle.properties -i -e "s#\(minecraft\.version\.descriptor = \).*#\1$mcVersion#"
-  if "$@" ; then
+  if $command ; then
     succeeded="$succeeded $mcVersion"
   else
     failed="$failed $mcVersion"
