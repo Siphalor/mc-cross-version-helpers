@@ -9,7 +9,8 @@ printHelp() {
   cat <<EOT > /dev/stderr
 Usage: $0 [options] [--] <command> [<args>]
 Options:
-  --versions: Comma-separated list of Minecraft versions this command should run for.
+  --fail-fast, -f: Abort with non-zero exit code on the first error
+  --versions <versions>: Comma-separated list of Minecraft versions this command should run for.
       By default, the command will be executed for each available Minecraft version.
 EOT
 }
