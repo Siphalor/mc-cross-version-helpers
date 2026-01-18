@@ -36,6 +36,14 @@ for arg in "$@" ; do
       lastArg="$arg"
       continue
       ;;
+    "--fail-fast")
+      failFast=1
+      continue
+      ;;
+    "-f")
+      failFast=1
+      continue
+      ;;
     "--")
       mode=cmd
       continue
@@ -65,6 +73,10 @@ for mcVersion in $mcVersions ; do
   if $command ; then
     succeeded="$succeeded $mcVersion"
   else
+    if [ -n "$failFast" ] ; then
+      printf '%bFailed: %s%b\n' "$FMT_RED" "$mcVersion" "$FMT_CLEAR"
+      exit 1
+    fi
     failed="$failed $mcVersion"
   fi
   echo
