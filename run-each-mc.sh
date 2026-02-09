@@ -27,7 +27,7 @@ for arg in "$@" ; do
   fi
   case "$lastArg" in
     "--versions")
-      mcVersions="$mcVersions $(echo "$arg" | sed 's/,/ /g')"
+      mcVersions="$mcVersions ${arg//,/ }"
       lastArg=
       continue
       ;;
@@ -37,11 +37,7 @@ for arg in "$@" ; do
       lastArg="$arg"
       continue
       ;;
-    "--fail-fast")
-      failFast=1
-      continue
-      ;;
-    "-f")
+    "--fail-fast" | "-f")
       failFast=1
       continue
       ;;
